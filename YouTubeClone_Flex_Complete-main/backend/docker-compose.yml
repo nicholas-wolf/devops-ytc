@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  backend:
+    container_name: backend
+    image: nwolf083/youtubebackend:latest
+    ports:
+      - '80:8000'
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh ./entrypoint.sh
+  
+  db:
+    container_name: db
+    image: mysql
+
+    environment:
+      MYSQL_DATABASE: 'youtube_database'
+      MYSQL_ROOT_PASSWORD: 'example'
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
